@@ -1,11 +1,12 @@
-FROM python:3.10-slim
+FROM python:3.10-slim-bullseye
 
 WORKDIR /app
 
-# Install system dependencies needed for OpenCV / ONNX image processing
+# Install GL, OpenCV, and build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libgl1 \
     libglib2.0-0 \
+    libgomp1 \
     && rm -rf /var/lib/apt-get/lists/*
 
 COPY requirements.txt .
