@@ -1,15 +1,15 @@
-FROM python:3.10-slim-bullseye
+FROM python:3.10-slim
 
 WORKDIR /app
 
-# Install GL, OpenCV, and build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libgl1 \
     libglib2.0-0 \
     libgomp1 \
-    && rm -rf /var/lib/apt-get/lists/*
+    && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
+
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
