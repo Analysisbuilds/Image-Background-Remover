@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-white text-slate-900 antialiased">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RemoveBG </title>
+  <link rel="icon" href="/static/logo.png" type="image/png">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <style>
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    .bg-checkerboard {
+      background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+      background-size: 16px 16px;
+      background-color: #f8fafc;
+    }
+  </style>
+</head>
+<body class="min-h-full flex flex-col justify-between bg-white selection:bg-blue-100 selection:text-blue-700">
+  <header class="sticky top-0 z-50 bg-white border-b border-slate-100">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-2.5 text-slate-900 font-bold text-lg tracking-tight hover:opacity-90 transition-opacity">
+        <img src="/static/logo.png" alt="RemoveBG Logo" class="w-8 h-8 object-contain rounded-lg">        
+      </a>
+      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
+        <a href="#home" class="text-slate-900 font-semibold">Home</a>
+        <a href="#about" class="hover:text-slate-900 transition-colors">About</a>
+      </nav>
+      <button id="menuBtn" class="md:hidden p-2 text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-50 focus:outline-none" aria-label="Toggle Navigation">
+        <svg id="menuIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+    <div id="mobileMenu" class="hidden md:hidden border-b border-slate-100 bg-white px-4 pt-2 pb-4 space-y-2 text-sm font-medium text-slate-600">
+      <a href="#home" class="block px-3 py-2 rounded-md bg-slate-50 text-slate-900">Home</a>
+
+      <a href="#about" class="block px-3 py-2 rounded-md hover:bg-slate-50 hover:text-slate-900">About</a>
+    </div>
+  </header>
+  <main class="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 py-12 sm:py-16">
+    <div class="text-center max-w-2xl mx-auto space-y-4">
+      <h1 class="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
+        Remove Image Background
+      </h1>
+      <p class="text-base sm:text-lg text-slate-600 font-normal">
+        Automatically remove backgrounds from your images. Fast, simple, and 
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-100 align-middle ml-1">
+          Free
+        </span>
+      </p>
+    </div>
+    <div class="mt-10 max-w-xl mx-auto">
+      <div id="uploadState" class="space-y-4">
+        <div id="dropZone" class="border-2 border-dashed border-slate-200 hover:border-blue-500 bg-slate-50/50 hover:bg-blue-50/30 transition-all rounded-2xl p-8 sm:p-10 text-center cursor-pointer group flex flex-col items-center justify-center min-h-[220px]">
+          <input type="file" id="fileInput" accept="image/png, image/jpeg, image/webp" class="hidden">
+          
+          <button type="button" id="triggerBtn" class="w-full sm:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold text-base rounded-xl shadow-sm transition-all flex items-center justify-center gap-3">
+            <svg class="w-5 h-5 text-white/90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+            </svg>
+            <span>Upload Image</span>
+          </button>
+
+          <p class="text-slate-500 text-xs mt-4 font-medium">Or drop an image anywhere in this box</p>
+        </div>
+
+        <p class="text-center text-xs text-slate-400 font-medium">
+          Supports JPG, PNG or WebP • Up to 10MB
+        </p>
+      </div>
+
+      <!-- Loading State -->
+      <div id="loadingState" class="hidden py-12 text-center space-y-4">
+        <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-50 text-blue-600">
+          <svg class="w-6 h-6 animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        </div>
+        <p class="text-sm font-semibold text-slate-700 animate-pulse">Removing background...</p>
+      </div>
+
+      <!-- Result  -->
+      <div id="resultState" class="hidden space-y-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+          <div class="space-y-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 block text-center">Original</span>
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 flex items-center justify-center h-64 overflow-hidden">
+              <img id="originalImg" class="max-h-full max-w-full object-contain rounded-lg" alt="Original Upload">
+            </div>
+          </div>
+
+          <!--  Output -->
+          <div class="space-y-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-blue-600 block text-center">Background Removed</span>
+            <div class="bg-checkerboard border border-slate-200 rounded-xl p-3 flex items-center justify-center h-64 overflow-hidden">
+              <img id="outputImg" class="max-h-full max-w-full object-contain rounded-lg" alt="Background Removed Result">
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col sm:flex-row items-center gap-3">
+          <a id="downloadBtn" download="cutout.png" class="w-full sm:flex-1 py-3.5 px-6 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold text-sm rounded-xl text-center shadow-sm transition-all cursor-pointer">
+            Download PNG
+          </a>
+          <button id="resetBtn" type="button" class="w-full sm:w-auto py-3.5 px-6 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-sm rounded-xl text-center transition-all">
+            Remove another image
+          </button>
+        </div>
+      </div>
+
+    </div>
+      <div class="mt-10 text-center pt-2 border-t border-slate-100">
+        <p>Developed by <span class="text-slate-600 font-semibold">Analysisbuilds</span></p>
+      </div>
+    </div>
+  </main>
+<script src="/static/app.js"></script>
+</body>
+</html>
