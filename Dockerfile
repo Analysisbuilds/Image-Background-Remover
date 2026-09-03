@@ -14,4 +14,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["sh", "-c", "uvicorn src.bg_remover.main:app --host 0.0.0.0 --port ${PORT:-10000}"]
+EXPOSE 10000
+
+CMD ["sh", "-c", "echo Starting FastAPI... && uvicorn src.bg_remover.main:app --host 0.0.0.0 --port ${PORT:-10000}"]
