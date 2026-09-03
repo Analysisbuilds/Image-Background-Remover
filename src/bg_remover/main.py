@@ -1,9 +1,8 @@
 import io
 
 from fastapi import FastAPI, File, UploadFile, HTTPException
-from fastapi.responses import Response, FileResponse
-from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import Response
 
 from rembg import remove
 from PIL import Image
@@ -11,11 +10,11 @@ from PIL import Image
 
 app = FastAPI()
 
-# Allow the Vercel frontend to communicate with the Render API
+# Allow the Vercel frontend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://imagebackground-remover.vercel.app/",
+        "https://imagebackground-remover.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -23,20 +22,14 @@ app.add_middleware(
 )
 
 
-app.mount(
-    "/static",
-    StaticFiles(directory="src/bg_remover/static"),
-    name="static"
-)
-
-
 @app.get("/")
-async def serve_index():
-    return FileResponse("src/bg_remover/static/index.html")
+async def root():
+    return {"message": "RemoveBG API is running"}
 
 
 @app.post("/api/remove-bg")
 async def remove_background(file: UploadFile = File(...)):
+
     if not file.content_type or not file.content_type.startswith("image/"):
         raise HTTPException(
             status_code=400,
@@ -52,7 +45,6 @@ async def remove_background(file: UploadFile = File(...)):
 
         buffer = io.BytesIO()
         output_image.save(buffer, format="PNG")
-        buffer.seek(0)
 
         return Response(
             content=buffer.getvalue(),
