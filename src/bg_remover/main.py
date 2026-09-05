@@ -1,16 +1,12 @@
 import io
-
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
-
-from rembg import remove
+from rembg import remove, new_session
 from PIL import Image
-
 
 app = FastAPI()
 
-# Allow the Vercel frontend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -20,6 +16,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+session = new_session("u2netp")
 
 
 @app.get("/")
@@ -41,7 +39,7 @@ async def remove_background(file: UploadFile = File(...)):
 
         input_image = Image.open(io.BytesIO(input_bytes))
 
-        output_image = remove(input_image)
+        output_image = remove(input_image, session=session)
 
         buffer = io.BytesIO()
         output_image.save(buffer, format="PNG")
