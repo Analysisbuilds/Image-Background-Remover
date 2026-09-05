@@ -18,6 +18,7 @@ app.add_middleware(
 )
 
 session = new_session("u2netp")
+MAX_DIMENSION = 1200
 
 
 @app.get("/")
@@ -36,8 +37,9 @@ async def remove_background(file: UploadFile = File(...)):
 
     try:
         input_bytes = await file.read()
-
         input_image = Image.open(io.BytesIO(input_bytes))
+        input_image = input_image.convert("RGB")
+        input_image.thumbnail((MAX_DIMENSION, MAX_DIMENSION), Image.LANCZOS)
 
         output_image = remove(input_image, session=session)
 
